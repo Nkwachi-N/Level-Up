@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 void main(){
@@ -12,64 +13,73 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.purple.shade400
       ),
-      home: Home(),
-    );
-  }
-}
-
-class Home extends StatelessWidget {
-  /*TabController _tabController = TabController(
-    length: 3, vsync: this
-  );*/
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: DefaultTabController(
-          length: 3,
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10.0),
-                child: Center(
-                    child: Text('Day One')),
-                color: Colors.green.shade400,
-              ),
-              TabBar(tabs:[
-                Tab(
-                  icon: Icon(Icons.home,
-                  color: Colors.black,),
-                ),
-                Tab(
-                  icon: Icon(Icons.card_travel,
-                  color: Colors.black,),
-                ),
-                Tab(
-                  icon: Icon(Icons.shop,
-                  color: Colors.black,),
-                )
-              ]),
-              Expanded(child: TabBarView(children: [
-                Container(
-                  color:Colors.indigo,
-                  child: Text('Home'),
-                ),
-                Container(
-                  color: Colors.yellow.shade900,
-                ),
-                Container(
-                  color: Colors.green,
-                  child: Text('Home'),
-                )
-
-              ]))
-            ],
-          ),
-        ),
-
+      home: Scaffold(
+        body: Home(),
       ),
     );
   }
 }
+
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title:Text('Form Validation') ,
+      ),
+      body: Form(
+        key: _formKey,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Enter Text'
+                  ),
+                  validator: (value){
+                    if(value.isEmpty){
+                      return 'Field cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                      hintText: 'Enter a'
+                  ),
+                  validator: (value){
+                    if(!value.contains('a')){
+                      return 'Enter just a bossman, it\'s not hard.';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(height: 20.0 ,),
+              RaisedButton(
+                child: Text('Submit'),
+                  onPressed: (){
+                if(_formKey.currentState.validate()){
+                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Good job!')));
+                }
+              })
+            ],
+      )
+      ),
+    );
+  }
+}
+
 
 
