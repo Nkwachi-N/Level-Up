@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 
-void main(){
+void main() {
   runApp(MyApp());
 }
 
@@ -10,9 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.purple.shade400
-      ),
+      theme: ThemeData(primaryColor: Colors.purple.shade400),
       home: Scaffold(
         body: Home(),
       ),
@@ -29,17 +26,16 @@ class _HomeState extends State<Home> {
   TextEditingController _firstController;
   FocusNode _focusNode;
 
-
   @override
   void initState() {
     super.initState();
     _firstController = TextEditingController();
 
-    _focusNode  = FocusNode();
+    _focusNode = FocusNode();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     _firstController.dispose();
     _focusNode.dispose();
@@ -51,24 +47,22 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title:Text('Form Validation') ,
+        title: Text('Form Validation'),
       ),
       body: Form(
-        key: _formKey,
+          key: _formKey,
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  onFieldSubmitted: (value){
+                  onFieldSubmitted: (value) {
                     _focusNode.requestFocus();
                   },
                   controller: _firstController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Text'
-                  ),
-                  validator: (value){
-                    if(value.isEmpty){
+                  decoration: InputDecoration(hintText: 'Enter Text'),
+                  validator: (value) {
+                    if (value.isEmpty) {
                       return 'Field cannot be empty';
                     }
                     return null;
@@ -79,44 +73,33 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   focusNode: _focusNode,
-                  decoration: InputDecoration(
-                      hintText: 'Enter a'
-                  ),
-                  validator: (value){
-                    if(!value.contains('a')){
+                  decoration: InputDecoration(hintText: 'Enter a'),
+                  validator: (value) {
+                    if (!value.contains('a')) {
                       return 'Enter just a bossman, it\'s not hard.';
                     }
                     return null;
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  decoration: InputDecoration(hintText: 'Enter nothing',
-                    border: InputBorder.none
-                  ),
-
-                ),
+              SizedBox(
+                height: 20.0,
               ),
-              SizedBox(height: 20.0 ,),
               RaisedButton(
-                child: Text('Submit'),
-                  onPressed: (){
-                if(_formKey.currentState.validate()){
-                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Good job!')));
-                }
-              })
+                  child: Text('Submit'),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      Scaffold.of(context)
+                          .showSnackBar(
+                          SnackBar(content: Text('Good job!'),
+                            action: SnackBarAction(label: 'Hello', onPressed: (){
+                              print('Hello');
+                            }),
+                      ));
+                    }
+                  })
             ],
-      )
-      ),
+          )),
     );
   }
-
-  void printText(){
-    print('Text changed to ${_firstController.text}');
-  }
 }
-
-
-
