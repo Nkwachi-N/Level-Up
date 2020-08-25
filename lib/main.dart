@@ -26,6 +26,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController _firstController;
+  FocusNode _focusNode;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _firstController = TextEditingController();
+
+    _focusNode  = FocusNode();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _firstController.dispose();
+    _focusNode.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -41,6 +60,10 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  onFieldSubmitted: (value){
+                    _focusNode.requestFocus();
+                  },
+                  controller: _firstController,
                   decoration: InputDecoration(
                     hintText: 'Enter Text'
                   ),
@@ -55,6 +78,7 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  focusNode: _focusNode,
                   decoration: InputDecoration(
                       hintText: 'Enter a'
                   ),
@@ -64,6 +88,15 @@ class _HomeState extends State<Home> {
                     }
                     return null;
                   },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(hintText: 'Enter nothing',
+                    border: InputBorder.none
+                  ),
+
                 ),
               ),
               SizedBox(height: 20.0 ,),
@@ -78,6 +111,10 @@ class _HomeState extends State<Home> {
       )
       ),
     );
+  }
+
+  void printText(){
+    print('Text changed to ${_firstController.text}');
   }
 }
 
