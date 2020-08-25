@@ -17,17 +17,59 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
+class Home extends StatelessWidget {
+  /*TabController _tabController = TabController(
+    length: 3, vsync: this
+  );*/
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
+        body: DefaultTabController(
+          length: 3,
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                    child: Text('Day One')),
+                color: Colors.green.shade400,
+              ),
+              TabBar(tabs:[
+                Tab(
+                  icon: Icon(Icons.home,
+                  color: Colors.black,),
+                ),
+                Tab(
+                  icon: Icon(Icons.card_travel,
+                  color: Colors.black,),
+                ),
+                Tab(
+                  icon: Icon(Icons.shop,
+                  color: Colors.black,),
+                )
+              ]),
+              Expanded(child: TabBarView(children: [
+                Container(
+                  color:Colors.indigo,
+                  child: Text('Home'),
+                ),
+                Container(
+                  color: Colors.yellow.shade900,
+                ),
+                Container(
+                  color: Colors.green,
+                  child: Text('Home'),
+                )
 
+              ]))
+            ],
+          ),
+        ),
+
+      ),
     );
   }
 }
+
 
