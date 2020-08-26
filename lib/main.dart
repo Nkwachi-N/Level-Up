@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:level_up/routes.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,11 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: Colors.purple.shade400),
-      routes: Routes.routes,
-      home: Scaffold(
-        body: Home(),
-      ),
+      home: Home(),
     );
   }
 }
@@ -27,80 +21,299 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  TextEditingController _firstController;
-  FocusNode _focusNode;
-  final items = List<String>.generate(20, (i) => "Item ${i + 1}");
-
-  @override
-  void initState() {
-    super.initState();
-    _firstController = TextEditingController();
-
-    _focusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _firstController.dispose();
-    _focusNode.dispose();
-  }
-
+  bool displayOne = false;
+  bool displayTwo = true;
+  String _text = 'You dey the Home Screen';
+  String _previousText = '';
+  Color backgroundColor = Colors.orange;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.green.shade600,
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('Form Validation'),
-        ),
-        body: GestureDetector(
-          onTap: (){
-         Navigator.pushNamed(context, Routes.details,
-         arguments: 'Strings');
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: backgroundColor,
+          body: Column(
+            children: [
+              Expanded(
+                  child: Container(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _text,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                    )
+
+              )),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 5.0,
+                  ),
+                  DragTarget(
+          builder: (context, List<String> candidateData,
+              rejectedData) {
+            return displayOne ? Container(
+              color: Colors.transparent,
+              height: 40.0,
+              width: 100.0,
+            ) : _draggable();
           },
-          child: Center(
-            child:Hero(
-              tag: 'hero',
-              child: CachedNetworkImage(
-                imageUrl: "https://picsum.photos/250?image=9",
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+          onWillAccept: (data) {
+            if (data == "Knight") {
+              return true;
+            } else {
+              return false;
+            }
+          },
+          onAccept: (data) {
+            setState(() {
+              displayOne = !displayOne;
+            });
+          },
+        ),
+                  Spacer(),
+                  DragTarget(
+                    builder: (context, List<String> candidateData,
+                        rejectedData) {
+                      return !displayOne ? Container(
+                        color: Colors.transparent,
+                        height: 40.0,
+                        width: 100.0,
+                      ) : _draggable();
+                    },
+                    onWillAccept: (data) {
+                      if (data == "Knight") {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    },
+                    onAccept: (data) {
+                      setState(() {
+                        displayOne = !displayOne;
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    width: 5.0,
+                  ),
+
+                ],
               ),
-            ),
-          ),
-        )
-          );
+              SizedBox(
+                height: 10.0,
+              )
+            ],
+          )),
+    );
   }
-}
 
-class DetailScreen extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    final String args = ModalRoute.of(context).settings.arguments;
-    return Scaffold(
-      body: Column(
-        children: [
-          GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            child: Hero(
-              tag: 'hero',
-              child: CachedNetworkImage(
-                imageUrl: "https://picsum.photos/250?image=9",
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+  Widget _draggable(){
+    return Draggable(
+      onDragCompleted: (){
+        _text = _previousText;
+      },
+      onDraggableCanceled: (velocity,offset){
+        setState(() {
+          _text = _previousText;
+        });
+      },
+      onDragStarted: (){
+      setState(() {
+        _previousText = _text;
+        _text = 'See as you hold the bottom Nav like thief, Baba free am na';
+      });
+    },
+      data: 'Knight',
+      axis: Axis.horizontal,
+      feedback: Container(
+        decoration: BoxDecoration(
+            color: Colors.purple.shade500,
+            borderRadius:
+            BorderRadius.circular(16.0)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.home,
+                color: Colors.white,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(args),
-          )
-        ],
-      )
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.chat,
+                color: Colors.white,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.purple.shade500,
+            borderRadius:
+            BorderRadius.circular(16.0)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding:
+              const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: (){
+                  setState(() {
+                    backgroundColor = Colors.green.shade600;
+                    _text = 'You dey Home tab my G';
+                  });
+                },
+                child: Icon(
+                  Icons.home,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: (){
+                  setState(() {
+                    _text = 'You don press the mic, abeg off am';
+                    backgroundColor = Colors.teal.shade300;
+                  });
+                },
+                child: Icon(
+                  Icons.mic,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: (){
+                  setState(() {
+                    _text = 'Star boy, numer One!';
+                    backgroundColor = Colors.indigoAccent.shade200;
+                  });
+                },
+                child: Icon(
+                  Icons.star,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+      childWhenDragging: Container(),
     );
   }
 }
+
+class DraggableWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Draggable(
+      data: "Knight",
+      axis: Axis.horizontal,
+      feedback: Align(
+        alignment: Alignment(-0.9, 0.0),
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.purple.shade500,
+              borderRadius: BorderRadius.circular(16.0)),
+          child: Row(
+            children: [
+              SizedBox(width: 10.0,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.home,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.chat,
+                  color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      child: Align(
+        alignment: Alignment(-0.9, 0.0),
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.purple.shade500,
+              borderRadius: BorderRadius.circular(16.0)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.home,
+                  color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.chat,
+                  color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      childWhenDragging: Container(),
+    );
+  }
+}
+
+
+
+
+
