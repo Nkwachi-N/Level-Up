@@ -1,11 +1,62 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
+import 'package:sentry/sentry.dart';
+
+
+final _sentry = SentryClient(dsn: "a8c4b61705b94e408da9a841442c0a35");
+
+void main() async {
+  runZonedGuarded<Future<void>>(() async {
+    runApp(MyApp());
+  }, (Object error, StackTrace stackTrace) {
+    _reportError(error, stackTrace);
+  });
+  FlutterError.onError = (details, {bool forceReport = false}) {
+    try {
+      _sentry.captureException(
+        exception: details.exception,
+        stackTrace: details.stack,
+      );
+    } catch (e) {
+      print('Sending report to sentry.io failed: $e');
+    } finally {
+      // Also use Flutter's pretty error logging to the device's console.
+      FlutterError.dumpErrorToConsole(details, forceReport: forceReport);
+    }
+  };
 }
 
+bool get isInDebugMode {
+  // Assume you're in production mode.
+  bool inDebugMode = false;
+  assert(inDebugMode = true);
+
+  return inDebugMode;
+}
+
+
+Future<void> _reportError(dynamic error, dynamic stackTrace) async {
+  // Print the exception to the console.
+  print('Caught error: $error');
+  if (isInDebugMode) {
+    // Print the full stacktrace in debug mode.
+    print(stackTrace);
+  } else {
+    // Send the Exception and Stacktrace to Sentry in Production mode.
+    _sentry.captureException(
+      exception: error,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
+
+
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,6 +67,8 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+
+
 }
 
 class Home extends StatefulWidget{
