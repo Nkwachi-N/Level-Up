@@ -26,7 +26,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController _firstController;
   FocusNode _focusNode;
-  final items = List<String>.generate(20, (i) => "Item ${i + 1}");
+
+  final items = List<ListItem>.generate(200,
+        (i) => i % 6 == 0
+        ? HeadingItem("Heading $i")
+        : MessageItem("Sender $i", "Message body $i"),
+  );
 
   @override
   void initState() {
@@ -43,6 +48,8 @@ class _HomeState extends State<Home> {
     _focusNode.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,43 +57,54 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           title: Text('Form Validation'),
         ),
-        body: ListView.builder(
+        body:ListView.builder(
           itemCount: items.length,
           itemBuilder: (context, index) {
-            return Dismissible(
-              direction: DismissDirection.endToStart,
-              background:Container(
-                color: Colors.red,
-                child: Align(
-                  alignment: Alignment(0.9, 0.0),
-                  child: Text('Delete',style: TextStyle(
-                    color: Colors.white
-                  ),),
-                ),
-              ),
-              key: Key(items[index]),
-              onDismissed: (direction)
-              {
-                setState(() {
-                  items.removeAt(index);
-                });
-
-                // Show a snackbar. This snackbar could also contain "Undo" actions.
-                Scaffold
-                    .of(context)
-                    .showSnackBar(SnackBar(content: Text("${items[index]} dismissed")));
-
-              },
-              child: ListTile(
-
-                title: Text('${items[index]}'),
-              ),
+            final item = items[index];
+            return ListTile(
+              title: item.buildTitle(context),
+              subtitle: item.buildSubtitle(context),
             );
           },
-        ));
+        ),
+    );
   }
 }
 
-/*OrientationBuilder(builder: (context,orientation){
-        return GridView.count(crossAxisCount: orientation == Orientation.portrait ? 2 : 3);
-      })*/
+abstract class ListItem{
+  Widget buildTitle(BuildContext context);
+
+  Widget buildSubtitle(BuildContext context);
+}
+/// A ListItem that contains data to display a heading.
+class HeadingItem implements ListItem {
+  final String heading;
+
+  HeadingItem(this.heading);
+
+  Widget buildTitle(BuildContext context) {
+    return Text(
+      heading,
+      style: Theme.of(context).textTheme.headline5,
+    );
+  }
+
+  Widget buildSubtitle(BuildContext context) => null;
+}
+
+/// A ListItem that contains data to display a message.
+class MessageItem implements ListItem {
+  final String sender;
+  final String body;
+
+  MessageItem(this.sender, this.body);
+
+  Widget buildTitle(BuildContext context) => Row(
+    children: [
+      Icon(Icons.graphic_eq),
+      Text(sender)
+    ],
+  );
+
+  Widget buildSubtitle(BuildContext context) => Text(body);
+}
