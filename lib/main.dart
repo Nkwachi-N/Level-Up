@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:level_up/routes.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,6 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primaryColor: Colors.purple.shade400),
+      routes: Routes.routes,
       home: Scaffold(
         body: Home(),
       ),
@@ -46,47 +49,58 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.green.shade600,
         appBar: AppBar(
           centerTitle: true,
           title: Text('Form Validation'),
         ),
-        body: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return Dismissible(
-              direction: DismissDirection.endToStart,
-              background:Container(
-                color: Colors.red,
-                child: Align(
-                  alignment: Alignment(0.9, 0.0),
-                  child: Text('Delete',style: TextStyle(
-                    color: Colors.white
-                  ),),
-                ),
-              ),
-              key: Key(items[index]),
-              onDismissed: (direction)
-              {
-                setState(() {
-                  items.removeAt(index);
-                });
-
-                // Show a snackbar. This snackbar could also contain "Undo" actions.
-                Scaffold
-                    .of(context)
-                    .showSnackBar(SnackBar(content: Text("${items[index]} dismissed")));
-
-              },
-              child: ListTile(
-
-                title: Text('${items[index]}'),
-              ),
-            );
+        body: GestureDetector(
+          onTap: (){
+         Navigator.pushNamed(context, Routes.details,
+         arguments: 'Strings');
           },
-        ));
+          child: Center(
+            child:Hero(
+              tag: 'hero',
+              child: CachedNetworkImage(
+                imageUrl: "https://picsum.photos/250?image=9",
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+            ),
+          ),
+        )
+          );
   }
 }
 
-/*OrientationBuilder(builder: (context,orientation){
-        return GridView.count(crossAxisCount: orientation == Orientation.portrait ? 2 : 3);
-      })*/
+class DetailScreen extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    final String args = ModalRoute.of(context).settings.arguments;
+    return Scaffold(
+      body: Column(
+        children: [
+          GestureDetector(
+            onTap: (){
+              Navigator.pop(context);
+            },
+            child: Hero(
+              tag: 'hero',
+              child: CachedNetworkImage(
+                imageUrl: "https://picsum.photos/250?image=9",
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(args),
+          )
+        ],
+      )
+    );
+  }
+}
