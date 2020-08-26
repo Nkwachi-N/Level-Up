@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatefulWidget {
+class Home extends StatefulWidget{
   @override
   _HomeState createState() => _HomeState();
 }
@@ -26,6 +26,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController _firstController;
   FocusNode _focusNode;
+  TabController _controller;
 
   final items = List<ListItem>.generate(200,
         (i) => i % 6 == 0
@@ -52,24 +53,91 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('Form Validation'),
+    return SafeArea(
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+            body: NestedScrollView(
+                headerSliverBuilder: (BuildContext context, bool isScrolled){
+              return[
+                SliverAppBar(
+                  pinned: true,
+                  floating: true,
+                  bottom: TabBar(
+                    tabs: [
+                      Tab(
+                        icon: Icon(Icons.cancel),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.cancel),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.cancel),
+                      )
+                    ],
+                  ),
+                  centerTitle: true,
+                  title: Text('Floating app bar'),
+                  flexibleSpace: Container(
+                    color: Colors.green.shade500,
+                  )
+                )
+              ];
+            }, body: TabBarView(children: [
+              CustomScrollView(
+                slivers: [
+                  SliverList(
+                    // Use a delegate to build items as they're scrolled on screen.
+                    delegate: SliverChildBuilderDelegate(
+                      // The builder function returns a ListTile with a title that
+                      // displays the index of the current item.
+                          (context, index) => ListTile(title: Text('Item #$index')),
+                      // Builds 1000 ListTiles
+                      childCount: 1000,
+                    ),
+                  )
+
+                ],
+              ),
+              CustomScrollView(
+                slivers: [
+                  SliverList(
+                    // Use a delegate to build items as they're scrolled on screen.
+                    delegate: SliverChildBuilderDelegate(
+                      // The builder function returns a ListTile with a title that
+                      // displays the index of the current item.
+                          (context, index) => ListTile(title: Text('Item #$index')),
+                      // Builds 1000 ListTiles
+                      childCount: 1000,
+                    ),
+                  )
+
+                ],
+              ),
+              CustomScrollView(
+                slivers: [
+                  SliverList(
+                    // Use a delegate to build items as they're scrolled on screen.
+                    delegate: SliverChildBuilderDelegate(
+                      // The builder function returns a ListTile with a title that
+                      // displays the index of the current item.
+                          (context, index) => ListTile(title: Text('Item #$index')),
+                      // Builds 1000 ListTiles
+                      childCount: 1000,
+                    ),
+                  )
+
+                ],
+              )
+            ]))
         ),
-        body:ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return ListTile(
-              title: item.buildTitle(context),
-              subtitle: item.buildSubtitle(context),
-            );
-          },
-        ),
+      ),
     );
   }
 }
+
+
+
 
 abstract class ListItem{
   Widget buildTitle(BuildContext context);
@@ -99,7 +167,7 @@ class MessageItem implements ListItem {
 
   MessageItem(this.sender, this.body);
 
-  Widget buildTitle(BuildContext context) => Row(
+  Widget buildTitle(BuildContext context) => Column(
     children: [
       Icon(Icons.graphic_eq),
       Text(sender)
